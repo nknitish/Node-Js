@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "Nitish Kumar",
+    "email": "nitish.kumar@example.com",
+    "age": 24
+  },
+  {
+    "id": 2,
+    "name": "Rahul Sharma",
+    "email": "rahul.sharma@example.com",
+    "age": 26
+  },
+  {
+    "id": 3,
+    "name": "Amit Verma",
+    "email": "amit.verma@example.com",
+    "age": 25
+  },
+  {
+    "id": 4,
+    "name": "Suresh Patel",
+    "email": "suresh.patel@example.com",
+    "age": 28
+  },
+  {
+    "id": 5,
+    "name": "Vikas Gupta",
+    "email": "vikas.gupta@example.com",
+    "age": 23
+  },
+  {
+    "id": 6,
+    "name": "Ankit Singh",
+    "email": "ankit.singh@example.com",
+    "age": 27
+  },
+  {
+    "id": 7,
+    "name": "Rohit Mehta",
+    "email": "rohit.mehta@example.com",
+    "age": 29
+  },
+  {
+    "id": 8,
+    "name": "Deepak Yadav",
+    "email": "deepak.yadav@example.com",
+    "age": 24
+  },
+  {
+    "id": 9,
+    "name": "Karan Malhotra",
+    "email": "karan.malhotra@example.com",
+    "age": 26
+  },
+  {
+    "id": 10,
+    "name": "Manish Kapoor",
+    "email": "manish.kapoor@example.com",
+    "age": 25
+  }
+]

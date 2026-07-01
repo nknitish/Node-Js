@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "scripts": {
+    "start": "nodemon 06_Path.js"
+  },
+  "dependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
