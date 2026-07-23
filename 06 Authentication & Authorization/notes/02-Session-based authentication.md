@@ -306,7 +306,6 @@ After login
 app.post("/login", (req, res) => {
   req.session.user = {
     id: 1,
-
     name: "Nitish",
   };
 

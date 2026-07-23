@@ -313,7 +313,6 @@ The boarding pass carries the information needed for verification.
 app.post("/login", (req, res) => {
   req.session.user = {
     id: 1,
-
     name: "Nitish",
   };
 
