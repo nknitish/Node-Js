@@ -1,0 +1,22 @@
+{
+  "name": "06-background-jobs-real-time",
+  "version": "1.0.0",
+  "description": "Background jobs and Socket.io module",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "packageManager": "pnpm@10.14.0",
+  "dependencies": {
+    "bullmq": "^5.0.1",
+    "dotenv": "^16.4.5",
+    "express": "^5.2.1",
+    "ioredis": "^5.4.1",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
