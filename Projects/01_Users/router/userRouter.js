@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { userController } from "../controller/userController.js";
+import { validateUserQuery } from "../middleware/validateUserQuery.js";
 
 const router = Router();
 
 const { getUsers, getUser, createUser, deleteUser, updateUser, patchUser } =
   userController();
 
-router.get("/", getUsers);
+router.get("/", validateUserQuery, getUsers);
 
 router.get("/:id", getUser);
 

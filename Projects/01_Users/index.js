@@ -13,8 +13,11 @@ const PORT = process.env.PORT;
 await connectDB();
 
 //Middleware & Route
-
 app.use(logger);
+
+//Basic Route
+
+app.get("/", (req, res) => res.send("Welome to Node Js Project"));
 
 app.use(express.json());
 app.use("/users", userRouter);

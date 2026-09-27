@@ -1,15 +1,47 @@
 import User from "../models/usersModel.js";
+import { UserServices } from "../services/userServices.js";
+
 export const userController = () => {
   const getUsers = async (req, res) => {
-    const { name, email } = req.query;
+    const { name, email, page, limit, sort, order } = req.query;
 
-    let filter = {};
+    const filter = {};
 
-    if (name) filter.name = name;
-    if (email) filter.email = email;
+    if (name) {
+      filter.name = {
+        $regex: name.trim(),
+        $options: "i",
+      };
+    }
 
-    const response = await User.find(filter);
-    res.status(200).json(response);
+    if (email) {
+      filter.email = {
+        $regex: email.trim(),
+        $options: "i",
+      };
+    }
+
+    const skip = (page - 1) * limit;
+    const sortQuery = sort ? { [sort]: order === "desc" ? -1 : 1 } : {};
+
+    const [users, total] = await UserServices.getUsers({
+      skip,
+      limit,
+      sortQuery,
+      filter,
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.status(200).json({
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+      data: users,
+    });
   };
 
   const getUser = async (req, res) => {
@@ -24,10 +56,10 @@ export const userController = () => {
     res.status(200).json(response);
   };
 
-  const createUser = async (req, res) => {
+  const createUser = async (req, res, next) => {
     const { name, email } = req.body;
 
-    const response = await User.create({ name, email });
+    const response = await UserServices.createNewUser({ name, email });
 
     res.status(201).json({
       message: "User created",
