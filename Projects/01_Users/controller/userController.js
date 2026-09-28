@@ -1,25 +1,11 @@
-import User from "../models/usersModel.js";
 import { UserServices } from "../services/userServices.js";
+import { buildUserFilter } from "../utils/userQuery.js";
 
 export const userController = () => {
   const getUsers = async (req, res) => {
     const { name, email, page, limit, sort, order } = req.query;
 
-    const filter = {};
-
-    if (name) {
-      filter.name = {
-        $regex: name.trim(),
-        $options: "i",
-      };
-    }
-
-    if (email) {
-      filter.email = {
-        $regex: email.trim(),
-        $options: "i",
-      };
-    }
+    const filter = buildUserFilter({ name, email });
 
     const skip = (page - 1) * limit;
     const sortQuery = sort ? { [sort]: order === "desc" ? -1 : 1 } : {};
@@ -46,17 +32,11 @@ export const userController = () => {
 
   const getUser = async (req, res) => {
     const { id } = req.params;
-    const response = await User.findById(id);
-
-    if (!response) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
-    res.status(200).json(response);
+    const user = await UserServices.getUser(id);
+    res.status(200).json(user);
   };
 
-  const createUser = async (req, res, next) => {
+  const createUser = async (req, res) => {
     const { name, email } = req.body;
 
     const response = await UserServices.createNewUser({ name, email });
@@ -69,13 +49,7 @@ export const userController = () => {
 
   const deleteUser = async (req, res) => {
     const { id } = req.params;
-    const deletedUser = await User.findByIdAndDelete(id);
-
-    if (!deletedUser) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
+    const deletedUser = await UserServices.deleteUser(id);
 
     res.status(200).json({ message: "User Deleted", deletedUser });
   };
@@ -84,24 +58,12 @@ export const userController = () => {
     const { id } = req.params;
     const { email, name } = req.body;
 
-    if (!email || !name) {
-      return res.status(400).json({ message: "Name and email are required" });
-    }
+    const updatedUser = await UserServices.updateUser(id, { name, email });
 
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { name, email },
-      {
-        new: true,
-        runValidators: true,
-      },
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User Not found" });
-    }
-
-    res.status(200).json({ message: "User Updated", data: updatedUser });
+    res.status(200).json({
+      message: "User Updated",
+      data: updatedUser,
+    });
   };
 
   const patchUser = async (req, res) => {
@@ -111,14 +73,7 @@ export const userController = () => {
       ...(name !== undefined && { name }),
       ...(email !== undefined && { email }),
     };
-    const user = await User.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: "User Not found" });
-    }
+    const user = await UserServices.patchUser(id, updateData);
 
     res.status(200).json({ message: "User Updated", data: user });
   };

@@ -1,10 +1,20 @@
 export const validateUserQuery = (req, res, next) => {
-  let { limit = 10, page = 1, sort, order = "asc" } = req.query;
+  let { limit = "10", page = "1", sort, order = "asc" } = req.query;
 
-  // Pagination Error Handling
-  page = Number.parseInt(page, 10);
-  limit = Number.parseInt(limit, 10);
+  // Validate integer format before converting
+  const isPositiveInteger = (value) => /^\d+$/.test(String(value));
 
+  if (!isPositiveInteger(page) || !isPositiveInteger(limit)) {
+    return res.status(400).json({
+      message: "Page and limit must be positive integers",
+    });
+  }
+
+  // Convert validated strings to numbers
+  page = Number(page);
+  limit = Number(limit);
+
+  // Validate numeric constraints
   if (
     !Number.isInteger(page) ||
     !Number.isInteger(limit) ||
@@ -12,27 +22,30 @@ export const validateUserQuery = (req, res, next) => {
     limit <= 0 ||
     limit > 100
   ) {
-    return res.status(400).json({ message: "Invalid Pagination Query" });
+    return res.status(400).json({
+      message: "Invalid Pagination Query",
+    });
   }
 
-  // Sorting & Order Handling
-
+  // Validate sorting
   const allowedSorting = ["name", "email", "createdAt"];
   const allowedOrder = ["asc", "desc"];
+
   const normalizedOrder = String(order).toLowerCase();
 
   if (sort && !allowedSorting.includes(sort)) {
-    return res.status(400).json({ message: "Invalid Sort value" });
+    return res.status(400).json({
+      message: "Invalid Sort value",
+    });
   }
 
-  if (order && !allowedOrder.includes(normalizedOrder)) {
-    return res
-      .status(400)
-      .json({ message: "Invalid Order value. It can be asc or desc" });
+  if (!allowedOrder.includes(normalizedOrder)) {
+    return res.status(400).json({
+      message: "Invalid Order value. It can be asc or desc",
+    });
   }
 
-  // Normalising Requst Query
-
+  // Store normalized values for the controller
   req.query.page = page;
   req.query.limit = limit;
   req.query.order = normalizedOrder;

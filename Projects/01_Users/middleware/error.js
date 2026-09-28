@@ -1,4 +1,13 @@
+import { AppError } from "../errors/AppError.js";
+
 export const errorHandler = (error, req, res, next) => {
+  // Application / business error
+  if (error instanceof AppError) {
+    return res.status(error.statusCode).json({
+      message: error.message,
+    });
+  }
+
   // Mongoose schema validation error
   if (error.name === "ValidationError") {
     return res.status(400).json({
@@ -23,7 +32,7 @@ export const errorHandler = (error, req, res, next) => {
     });
   }
 
-  // Unknown/unexpected error
+  // Unknown / unexpected error
   console.error(error);
 
   return res.status(500).json({
