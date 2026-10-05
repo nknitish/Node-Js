@@ -1,37 +1,25 @@
 import { UserServices } from "../services/userServices.js";
-import { buildUserFilter } from "../utils/userQuery.js";
+import { successResponse } from "../utils/apiResponse.js";
 
 export const userController = () => {
   const getUsers = async (req, res) => {
-    const { name, email, page, limit, sort, order } = req.validated.query;
-    const filter = buildUserFilter({ name, email });
-    const skip = (page - 1) * limit;
-    const sortQuery = sort ? { [sort]: order === "desc" ? -1 : 1 } : {};
+    const result = await UserServices.getUsers(req.validated.query);
 
-    const [users, total] = await UserServices.getUsers({
-      skip,
-      limit,
-      sortQuery,
-      filter,
-    });
-
-    const totalPages = Math.ceil(total / limit);
-
-    res.status(200).json({
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages,
+    return successResponse(
+      res,
+      200,
+      {
+        pagination: result.pagination,
+        data: result.users,
       },
-      data: users,
-    });
+      "Users fetched successfully",
+    );
   };
 
   const getUser = async (req, res) => {
     const { id } = req.validated.params;
     const user = await UserServices.getUser(id);
-    res.status(200).json(user);
+    return successResponse(res, 200, user, "Users fetched successfully");
   };
 
   const createUser = async (req, res) => {
@@ -39,17 +27,14 @@ export const userController = () => {
 
     const response = await UserServices.createNewUser({ name, email });
 
-    res.status(201).json({
-      message: "User created",
-      data: response,
-    });
+    return successResponse(res, 201, response, "User created");
   };
 
   const deleteUser = async (req, res) => {
     const { id } = req.validated.params;
     const deletedUser = await UserServices.deleteUser(id);
 
-    res.status(200).json({ message: "User Deleted", deletedUser });
+    return successResponse(res, 200, deletedUser, "User Deleted");
   };
 
   const updateUser = async (req, res) => {
@@ -58,19 +43,14 @@ export const userController = () => {
 
     const updatedUser = await UserServices.updateUser(id, { name, email });
 
-    res.status(200).json({
-      message: "User Updated",
-      data: updatedUser,
-    });
+    return successResponse(res, 200, updatedUser, "User Updated");
   };
 
   const patchUser = async (req, res) => {
     const { id } = req.validated.params;
 
-    console.log(req);
-
     const user = await UserServices.patchUser(id, req.validated.body);
-    res.status(200).json({ message: "User Updated", data: user });
+    return successResponse(res, 200, user, "User Updated");
   };
 
   return {

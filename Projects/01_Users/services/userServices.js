@@ -1,13 +1,37 @@
 import { AppError } from "../errors/AppError.js";
 import { userRepository } from "../repository/userRepository.js";
+import { buildUserFilter } from "../utils/userQuery.js";
 
 export const UserServices = {
   createNewUser: (data) => {
     return userRepository.create(data);
   },
 
-  getUsers: ({ skip, limit, sortQuery, filter }) => {
-    return userRepository.getUsers({ skip, limit, sortQuery, filter });
+  getUsers: async ({ name, email, page, limit, sort, order }) => {
+    const filter = buildUserFilter({ name, email });
+
+    const skip = (page - 1) * limit;
+
+    const sortQuery = sort ? { [sort]: order === "desc" ? -1 : 1 } : {};
+
+    const [users, total] = await userRepository.getUsers({
+      skip,
+      limit,
+      sortQuery,
+      filter,
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      users,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    };
   },
 
   getUser: async (id) => {
