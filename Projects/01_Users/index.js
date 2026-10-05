@@ -1,5 +1,6 @@
 import express from "express";
 import userRouter from "./router/userRouter.js";
+import postRouter from "./router/postRouter.js";
 import "dotenv/config";
 import { logger } from "./middleware/logger.js";
 import { errorHandler } from "./middleware/error.js";
@@ -21,6 +22,7 @@ app.get("/", (req, res) => res.send("Welome to Node Js Project"));
 
 app.use(express.json());
 app.use("/users", userRouter);
+app.use("/posts", postRouter);
 
 app.use(errorHandler);
 

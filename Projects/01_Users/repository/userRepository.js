@@ -10,7 +10,7 @@ export const userRepository = {
     return Promise.all([query, User.countDocuments(filter)]);
   },
 
-  getUser: (id) => {
+  findById: (id) => {
     return User.findById(id);
   },
 

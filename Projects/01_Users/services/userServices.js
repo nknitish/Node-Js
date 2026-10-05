@@ -35,7 +35,7 @@ export const UserServices = {
   },
 
   getUser: async (id) => {
-    const user = await userRepository.getUser(id);
+    const user = await userRepository.findById(id);
 
     if (!user) {
       throw new AppError("User not found", 404);
