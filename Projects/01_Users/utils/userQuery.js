@@ -16,4 +16,3 @@ export const buildUserFilter = ({ name, email }) => {
 
   return filter;
 };
-

@@ -20,14 +20,14 @@ export const userRepository = {
 
   updateUser: (id, data) => {
     return User.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
     });
   },
 
   patchUser: (id, updateData) => {
     return User.findByIdAndUpdate(id, updateData, {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
     });
   },

@@ -31,12 +31,6 @@ export const UserServices = {
   },
 
   updateUser: async (id, data) => {
-    const { name, email } = data;
-
-    if (!email || !name) {
-      throw new AppError("Name and email are required", 400);
-    }
-
     const user = await userRepository.updateUser(id, data);
 
     if (!user) {

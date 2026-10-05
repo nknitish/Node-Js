@@ -1,10 +1,23 @@
 import { AppError } from "../errors/AppError.js";
+import { ZodError } from "zod";
 
 export const errorHandler = (error, req, res, next) => {
+  console.error(error);
   // Application / business error
   if (error instanceof AppError) {
     return res.status(error.statusCode).json({
       message: error.message,
+    });
+  }
+
+  // Zod validation error
+  if (error instanceof ZodError) {
+    return res.status(400).json({
+      message: "Validation failed",
+      errors: error.issues.map((issue) => ({
+        field: issue.path.join("."),
+        message: issue.message,
+      })),
     });
   }
 
@@ -31,9 +44,6 @@ export const errorHandler = (error, req, res, next) => {
       message: `${field} already exists`,
     });
   }
-
-  // Unknown / unexpected error
-  console.error(error);
 
   return res.status(500).json({
     message: "Internal server error",
