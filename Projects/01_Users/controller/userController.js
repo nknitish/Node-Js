@@ -10,7 +10,7 @@ export const userController = () => {
       200,
       {
         pagination: result.pagination,
-        data: result.users,
+        users: result.users,
       },
       "Users fetched successfully",
     );

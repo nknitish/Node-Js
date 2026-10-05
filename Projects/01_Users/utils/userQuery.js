@@ -1,18 +1,21 @@
 export const buildUserFilter = ({ name, email }) => {
-  let filter = {};
+  const filter = {};
+
   if (name) {
     filter.name = {
-      $regex: name.trim(),
+      $regex: `^${escapeRegex(name.trim())}`,
       $options: "i",
     };
   }
 
   if (email) {
     filter.email = {
-      $regex: email.trim(),
+      $regex: `^${escapeRegex(email.trim())}`,
       $options: "i",
     };
   }
 
   return filter;
 };
+
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
