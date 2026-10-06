@@ -100,4 +100,13 @@ export const UserServices = {
 
     return postRepository.findByAuthor(userId);
   },
+  getPostCountByAuthor: async (authorId) => {
+    const user = await userRepository.findById(authorId);
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    return postRepository.getPostCountByAuthor(authorId);
+  },
 };

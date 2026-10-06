@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Post from "../models/postModel.js";
 
 export const postRepository = {
@@ -23,5 +24,72 @@ export const postRepository = {
   },
   deleteByAuthor: (authorId, session) => {
     return Post.deleteMany({ author: authorId }, { session });
+  },
+
+  getPostCountByAuthor: (authorId) => {
+    return Post.aggregate([
+      {
+        $match: {
+          author: new mongoose.Types.ObjectId(authorId),
+        },
+      },
+      {
+        $group: {
+          _id: "$author",
+          postCount: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          authorId: "$_id",
+          postCount: 1,
+        },
+      },
+    ]);
+  },
+  getPostStatsByAuthor: () => {
+    return Post.aggregate([
+      // 1. Group posts by author
+      {
+        $group: {
+          _id: "$author",
+          postCount: { $sum: 1 },
+        },
+      },
+
+      // 2. Join with users collection
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "authorDetails",
+        },
+      },
+
+      // 3. Convert [user] → user
+      {
+        $unwind: "$authorDetails",
+      },
+
+      // 4. Shape the final response
+      {
+        $project: {
+          _id: 0,
+          authorId: "$_id",
+          authorName: "$authorDetails.name",
+          authorEmail: "$authorDetails.email",
+          postCount: 1,
+        },
+      },
+
+      // 5. Highest number of posts first
+      {
+        $sort: {
+          postCount: -1,
+        },
+      },
+    ]);
   },
 };
