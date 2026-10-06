@@ -53,6 +53,12 @@ export const userController = () => {
     return successResponse(res, 200, user, "User Updated");
   };
 
+  const getUserPosts = async (req, res) => {
+    const { id } = req.validated.params;
+    const posts = await UserServices.getUserPosts(id);
+    return successResponse(res, 200, posts, "User posts fetched successfully");
+  };
+
   return {
     getUser,
     getUsers,
@@ -60,5 +66,6 @@ export const userController = () => {
     deleteUser,
     updateUser,
     patchUser,
+    getUserPosts,
   };
 };

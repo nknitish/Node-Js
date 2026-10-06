@@ -11,12 +11,21 @@ import { validate } from "../middleware/validate.js";
 
 const router = Router();
 
-const { getUsers, getUser, createUser, deleteUser, updateUser, patchUser } =
-  userController();
+const {
+  getUsers,
+  getUser,
+  createUser,
+  deleteUser,
+  updateUser,
+  patchUser,
+  getUserPosts,
+} = userController();
 
 router.get("/", validate(userQuerySchema, "query"), getUsers);
 
 router.get("/:id", validate(userIdSchema, "params"), getUser);
+
+router.get("/:id/posts", validate(userIdSchema, "params"), getUserPosts);
 
 router.post("/", validate(createUserSchema, "body"), createUser);
 

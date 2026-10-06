@@ -1,6 +1,8 @@
 import { AppError } from "../errors/AppError.js";
+import { postRepository } from "../repository/postRepository.js";
 import { userRepository } from "../repository/userRepository.js";
 import { buildUserFilter } from "../utils/userQuery.js";
+import mongoose from "mongoose";
 
 export const UserServices = {
   createNewUser: (data) => {
@@ -45,13 +47,29 @@ export const UserServices = {
   },
 
   deleteUser: async (id) => {
-    const user = await userRepository.deleteUser(id);
+    const user = await userRepository.findById(id);
 
     if (!user) {
       throw new AppError("User not found", 404);
     }
 
-    return user;
+    const session = await mongoose.startSession();
+
+    try {
+      session.startTransaction();
+
+      await postRepository.deleteByAuthor(id, session);
+      const deletedUser = await userRepository.deleteUser(id, session);
+
+      await session.commitTransaction();
+
+      return deletedUser;
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      await session.endSession();
+    }
   },
 
   updateUser: async (id, data) => {
@@ -72,5 +90,14 @@ export const UserServices = {
     }
 
     return response;
+  },
+  getUserPosts: async (userId) => {
+    const user = await userRepository.findById(userId);
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    return postRepository.findByAuthor(userId);
   },
 };

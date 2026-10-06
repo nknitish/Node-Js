@@ -18,4 +18,10 @@ export const postRepository = {
 
   deletePost: (postId) =>
     Post.findByIdAndDelete(postId).populate("author", "name email"),
+  findByAuthor: (authorId) => {
+    return Post.find({ author: authorId }).populate("author", "name email");
+  },
+  deleteByAuthor: (authorId, session) => {
+    return Post.deleteMany({ author: authorId }, { session });
+  },
 };

@@ -14,8 +14,8 @@ export const userRepository = {
     return User.findById(id);
   },
 
-  deleteUser: (id) => {
-    return User.findByIdAndDelete(id);
+  deleteUser: (id, session) => {
+    return User.findByIdAndDelete(id, { session });
   },
 
   updateUser: (id, data) => {
